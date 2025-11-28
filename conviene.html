@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conviene</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="datos">
+        
+        <input type="number" name="" id="precioCLP">
+        <input type="button" value="Calcular" id="calcular">
+         <div id="tabla"></div>
+    </div>
+    <style>
+        * {
+            margin: 0%;
+            padding: 0%;
+            box-sizing: border-box;
+            
+        }
+        
+        .datos{
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: #2A7B9B;
+            background: linear-gradient(342deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+
+        }
+        #precioCLP{
+            background-color: #2a7b9bab;
+            border-radius: 5px;
+            border-style: none;
+            margin-top: 20px;
+            width: 400px;
+            height: 30px;
+            color: white;
+            font-size: 200%;
+            text-align: center;
+        }
+        #calcular{
+            display: flex;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: #EDDD53;
+            width: 50%;
+            border-radius: 10px;
+            border-style: none;
+            font-size:large;
+            font-weight: bold;
+        }
+    </style>
+    
+   
+    <script>
+        const botonCalcular = document.getElementById("calcular")
+        const precioUSDChile = 941;
+        const tabla =document.getElementById("tabla");
+        botonCalcular.addEventListener("click", function(){
+            const precioChile = document.getElementById("precioCLP").value;
+            const precioEnCLP = parseInt(precioChile);
+            const precioUSD=  Math.round((precioEnCLP / precioUSDChile));
+            const precioUSDenARG= 1455;
+            const precioEnArg = Math.ceil(precioUSDenARG * precioUSD);
+            const precioCLPaARS = precioEnCLP * 1.57;
+            
+            tabla.innerHTML = ` <table class="table table-striped table-bordered border-warning">
+                <tbody>
+                   
+                    <tr>
+                        <th scope="row">Precio en USD(CHILE)</th>
+                        <th> U$D `+ precioUSD +`</th>
+                    </tr>
+                    <tr>
+                        
+                        <th scope="row">Precio en Peso CHILENO</th>
+                        <td> CLP$ `+ precioChile +`</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Precio en Peso Argentino (cambio USD A ARGENTINOS)</th>
+                        <td>AR$ `+ precioEnArg + `</td>
+                    </tr>
+                        <th scope="row">Precio en Peso Argentino (cambio CHILENOS A ARGENTINOS)</th>
+                        <td>AR$ `+ precioCLPaARS + `</td>
+                    </tr>
+                </tbody>
+                </table>`
+        });
+    </script>
+    
+</body>
+</html>
