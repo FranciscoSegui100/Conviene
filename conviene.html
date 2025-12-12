@@ -3,95 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conviene</title>
+    <title>Calculadora de Conveniencia Chile-Arg</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-</head>
-<body>
-    <div class="datos">
-        
-        <input type="number" name="" id="precioCLP" placeholder="Introduce el precio del producto aquí" >
-        <input type="button" value="Calcular" id="calcular">
-         <div id="tabla"></div>
-    </div>
     <style>
-        * {
-            margin: 0%;
-            padding: 0%;
-            box-sizing: border-box;
-            
+        body {
+            background: linear-gradient(135deg, #2A7B9B 0%, #57C785 50%, #EDDD53 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
         }
         
-        .datos{
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            background: #2A7B9B;
-            background: linear-gradient(342deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+        .card-calculadora {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 90%;
+        }
 
-        }
-        #precioCLP{
-            background-color: #2a7b9bab;
-            border-radius: 5px;
-            border-style: none;
-            margin-top: 20px;
-            width: 50%;
-            height: 30px;
+        .btn-calcular {
+            background-color: #2A7B9B;
             color: white;
-            font-size: 200%;
-            text-align: center;
-        }
-        #calcular{
-            display: flex;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            background-color: #EDDD53;
-            width: 50%;
-            border-radius: 10px;
-            border-style: none;
-            font-size:large;
             font-weight: bold;
+            width: 100%;
+        }
+        
+        .btn-calcular:hover {
+            background-color: #1f5c75;
+            color: white;
+        }
+
+        .resultado-texto {
+            font-size: 1.1rem;
         }
     </style>
-    
-   
+</head>
+<body>
+
+    <div class="card-calculadora">
+        <h3 class="text-center mb-4 text-dark">Conversor de Precios</h3>
+        
+        <div class="mb-3">
+            <label for="precioCLP" class="form-label">Precio en Pesos Chilenos (CLP)</label>
+            <input type="number" class="form-control form-control-lg text-center" id="precioCLP" placeholder="Ej: 15000">
+        </div>
+
+        <button type="button" class="btn btn-calcular btn-lg mb-4" id="calcular">CALCULAR</button>
+        
+        <div id="tabla"></div>
+    </div>
+
     <script>
-        const botonCalcular = document.getElementById("calcular")
-        const precioUSDChile = 915;
-        const tabla =document.getElementById("tabla");
+        // CONSTANTES (Actualizar según cotización del día)
+        const TASA_USD_CHILE = 915;      // 1 USD = X CLP
+        const TASA_USD_ARG_BLUE = 1455;  // 1 USD = X ARS (Blue/Tarjeta)
+        const FACTOR_DIRECTO = 1.57;     // Cambio directo casas de cambio
+
+        const botonCalcular = document.getElementById("calcular");
+        const tabla = document.getElementById("tabla");
+
         botonCalcular.addEventListener("click", function(){
-            const precioChile = document.getElementById("precioCLP").value;
-            const precioEnCLP = parseInt(precioChile);
-            const precioUSD=  Math.round((precioEnCLP / precioUSDChile));
-            const precioUSDenARG= 1455;
-            const precioEnArg = Math.ceil(precioUSDenARG * precioUSD);
-            const precioCLPaARS = precioEnCLP * 1.57;
+            const inputVal = document.getElementById("precioCLP").value;
             
-            tabla.innerHTML = ` <table class="table table-striped table-bordered border-warning">
-                <tbody>
-                   
-                    <tr>
-                        <th scope="row">Precio en USD(CHILE)</th>
-                        <th> U$D `+ precioUSD +`</th>
-                    </tr>
-                    <tr>
-                        
-                        <th scope="row">Precio en Peso CHILENO</th>
-                        <td> CLP$ `+ precioChile +`</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Precio en Peso Argentino (cambio USD A ARGENTINOS)</th>
-                        <td>AR$ `+ precioEnArg + `</td>
-                    </tr>
-                        <th scope="row">Precio en Peso Argentino (cambio CHILENOS A ARGENTINOS)</th>
-                        <td>AR$ `+ precioCLPaARS + `</td>
-                    </tr>
-                </tbody>
-                </table>`
+            // Validación simple
+            if(inputVal === "" || inputVal < 0) {
+                alert("Por favor ingresa un precio válido");
+                return;
+            }
+
+            const precioEnCLP = parseFloat(inputVal);
+
+            // 1. Calcular precio en Dólares (NO usar parseInt aquí, o pierdes los decimales)
+            const precioUSD = precioEnCLP / TASA_USD_CHILE;
+
+            // 2. Calcular precio en Argentinos usando el dólar como puente
+            const precioEnArgViaUSD = precioUSD * TASA_USD_ARG_BLUE;
+
+            // 3. Calcular precio directo (Casas de cambio / Arbitraje)
+            const precioCLPaARS = precioEnCLP * FACTOR_DIRECTO;
+
+            // Renderizar tabla
+            tabla.innerHTML = `
+                <table class="table table-hover table-bordered text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th colspan="2">Resultados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="text-start">Original (CLP)</th>
+                            <td>$ ${precioEnCLP.toLocaleString('es-CL')}</td>
+                        </tr>   
+                        <tr>
+                            <th scope="row" class="text-start">Costo en USD (Chile)</th>
+                            <td class="fw-bold text-success">US$ ${precioUSD.toFixed(2)}</td>
+                        </tr>
+                        <tr class="table-warning">
+                            <th scope="row" class="text-start">En ARS (Cambio Directo) <br></th>
+                            <td class="fw-bold fs-5">$  ${Math.ceil(precioCLPaARS).toLocaleString('es-AR')}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-info mt-2 text-center" style="font-size: 0.8rem;">
+                    Cotización usada: 1 USD = ${TASA_USD_CHILE} CLP
+                </div>
+            `;
         });
     </script>
-    
 </body>
 </html>
